@@ -505,7 +505,7 @@ void PrintSensorInfo()
  *
  For the circuit above:
  * Resistance = ( Count*RawADC /(1024-Count))
-  */
+  *//
  long Resistance; 
  float Resistor = 15000; //bridge resistor
 // the measured resistance of your particular bridge resistor in
