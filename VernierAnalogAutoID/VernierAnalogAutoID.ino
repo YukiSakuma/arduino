@@ -6,19 +6,15 @@ It should read the +/-10 volt Voltage Probe correctly also.
 This version does all tests for resistorID sensors first, then
 turns on the I2C clock and tests for digital autoID sensors. After that,
 it turns off the I2C communications.
-
 Note that this sketch handles multiple pages of sensor calibrations.
-
 When used with the SparkFun Vernier Interface Shield, this program will AutoID
 two different sensors on BTA1 and BTA2. With homemade, breadboard
 connections, it will work with only one sensor.
-
 After the AutoID:
 Assuming Vernier analog (BTA) Sensors are connected to the BTA connectors,
 this sketch displays the time and sensor readings on the Serial Monitor.
 As written, the readings will be displayed every second. 
 Change the variable TimeBetweenReadings to change the rate.
-
 The changes in the 2015.04 version are:
   - fixed bug which lead to incorrect readings of analog sensors in BTA2 
     connector because I2C lines affected the readings
@@ -59,7 +55,7 @@ void setup()
     pinMode(muxlsb, OUTPUT); 
     pinMode(muxmsb, OUTPUT); 
 
-    Serial.println(""); 
+//    Serial.println(""); 
     //Read BTA1 Sensor
     digitalWrite(muxlsb, LOW); //set multiplexer for BTA1   
     digitalWrite(muxmsb, LOW);    
@@ -85,26 +81,27 @@ void setup()
     pinMode(A4, INPUT); //Turn off the I2C communication
     pinMode(A5, INPUT); 
     PrintSensorInfo();// this line can be commented out if you do not need all this info!!!
-    Serial.println(" ");    
-    Serial.println("Vernier Format 2");
-    Serial.println("Readings taken using Ardunio");
-    Serial.println("Data Set");
-    Serial.print("Time");
-    for (Channel=1;Channel<3;Channel++)
+//    Serial.println(" ");    
+//    Serial.println("Vernier Format 2");
+//    Serial.println("Readings taken using Ardunio");
+//    Serial.println("Data Set");
+//    Serial.print("Time");
+//    
+    for (Channel=1;Channel<3;Channel++) //2 was 3
      { 
-       Serial.print("\t"); //tab character
+//       Serial.print("\t"); //tab character
        //print sensor name:
-       Serial.print (ShortName[Channel]); 
+//       Serial.print (ShortName[Channel]); 
      } 
-    Serial.println("");      
-    Serial.print("seconds");
-    for (Channel=1;Channel<5;Channel++)
+//    Serial.println("");      
+//    Serial.print("seconds");
+    for (Channel=1;Channel<2;Channel++) // 2 was 5
      { 
-       Serial.print("\t"); //tab character
+//       Serial.print("\t"); //tab character
        //print sensor name:
-       Serial.print (Units[Channel]); 
+//       Serial.print (Units[Channel]);
      } 
-    Serial.println ("");
+//    Serial.println ("");
   }
   
 void loop()
@@ -115,10 +112,10 @@ void loop()
     float SensorReading[3];
     float Time;
     digitalWrite(led, HIGH); //turn on LED
-    Serial.print(ReadingNumber/1000.0*TimeBetweenReadings); 
-    for (int Channel=1;Channel<3;Channel++)
+//    Serial.print(ReadingNumber/1000.0*TimeBetweenReadings); 
+    for (int Channel=1;Channel<3;Channel++) //2 was 3
       {
-        Serial.print("\t"); //tab character
+//        Serial.print("\t"); //tab character
         if (Name[Channel]=="Voltage +/- 10V")
           {
              AltCount[1] = analogRead(A1); //read both +/- 110 volt lines
@@ -136,10 +133,24 @@ void loop()
            SensorReading[Channel]= Intercept[Channel] + Voltage[Channel] * Slope[Channel];
      //special calibration for thermistor temperture probe:
      if (SensorNumber[Channel]==10) SensorReading[Channel]=Thermistor(Count[Channel]);
-     Serial.print(SensorReading[Channel]);  
+      if (Channel==1)
+      {Serial.print("a");
+       Serial.print(SensorReading[Channel]);  
+       Serial.println(" "); 
+       delay(50);
+      }
+      else if (Channel==2)
+      {Serial.print("b");
+       Serial.print(SensorReading[Channel]);  
+       Serial.println(" "); 
+       delay(50);
+      }
+      else 
+      {}
+        
     } // end of going through the channels
 
-  Serial.println(" "); 
+//  Serial.println(" "); 
   delay(TimeBetweenReadings/2);// delay half of period
   digitalWrite(led, LOW);// LED on D13 flashes once per readng
   delay(TimeBetweenReadings/2);// delay the other half
@@ -449,27 +460,27 @@ void BTAResistorSensorID(int Channel)
 void PrintSensorInfo()
  {// print out information about sensor:
   //(This code is commented out, but add it for more feedback)
-   Serial.println(" "); 
-   Serial.print("BTA Connector ");
-   Serial.println(Channel);
-   Serial.print("sensor ID number: "); 
-   Serial.println(SensorNumber[Channel]);
-   Serial.print("ID voltage level: "); 
-   Serial.println(VoltageID[Channel]);
-   Serial.print("sensor name: ");  
-   Serial.println (Name[Channel]);
-   Serial.print("sensor short name: ");  
-   Serial.println (ShortName[Channel]); 
-   Serial.print("calibration page: ");  
-   Serial.println(Page[Channel]);
-   Serial.print("calibration equation type: ");  
-   Serial.println(CalEquationType[Channel]);
-   Serial.print("intercept: ");
-   Serial.println (Intercept[Channel]);
-   Serial.print("slope ");
-   Serial. println(Slope[Channel]); 
-   Serial.print("units: ");  
-   Serial.println (Units[Channel]);
+//   Serial.println(" "); 
+//   Serial.print("BTA Connector ");
+//   Serial.println(Channel);
+//   Serial.print("sensor ID number: "); 
+//   Serial.println(SensorNumber[Channel]);
+//   Serial.print("ID voltage level: "); 
+//   Serial.println(VoltageID[Channel]);
+//   Serial.print("sensor name: ");  
+//   Serial.println (Name[Channel]);
+//   Serial.print("sensor short name: ");  
+//   Serial.println (ShortName[Channel]); 
+//   Serial.print("calibration page: ");  
+//   Serial.println(Page[Channel]);
+//   Serial.print("calibration equation type: ");  
+//   Serial.println(CalEquationType[Channel]);
+//   Serial.print("intercept: ");
+//   Serial.println (Intercept[Channel]);
+//   Serial.print("slope ");
+//   Serial. println(Slope[Channel]); 
+//   Serial.print("units: ");  
+//   Serial.println (Units[Channel]);
    }// end of PrintSensorInfo
 
    float Thermistor(int Raw) //This function calculates temperature from ADC count
@@ -492,7 +503,6 @@ void PrintSensorInfo()
  *                                     |
  *                                Analog Pin 0
  *
-
  For the circuit above:
  * Resistance = ( Count*RawADC /(1024-Count))
   */
@@ -507,8 +517,3 @@ void PrintSensorInfo()
   Temp = Temp - 273.15;  // Convert Kelvin to Celsius                      
   return Temp;                                      // Return the Temperature
 }
-
-
-
-
-
